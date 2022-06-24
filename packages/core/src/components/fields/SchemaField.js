@@ -14,8 +14,6 @@ import {
   getDisplayLabel,
 } from "../../utils";
 
-const NullComponent = () => null;
-
 const REQUIRED_FIELD_SYMBOL = "*";
 const COMPONENT_TYPES = {
   array: "ArrayField",
@@ -41,7 +39,7 @@ function getFieldComponent(schema, uiSchema, idSchema, fields) {
   // If the type is not defined and the schema uses 'anyOf' or 'oneOf', don't
   // render a field and let the MultiSchemaField component handle the form display
   if (!componentName && (schema.anyOf || schema.oneOf)) {
-    return NullComponent;
+    return () => null;
   }
 
   return componentName in fields
@@ -368,55 +366,51 @@ function SchemaFieldRender(props) {
         render the selection and let `StringField` component handle
         rendering
       */}
-        {FieldComponent === NullComponent &&
-          schema.anyOf &&
-          !isSelect(schema) && (
-            <_AnyOfField
-              disabled={disabled}
-              readonly={readonly}
-              hideError={hideError}
-              errorSchema={errorSchema}
-              formData={formData}
-              idPrefix={idPrefix}
-              idSchema={idSchema}
-              idSeparator={idSeparator}
-              onBlur={props.onBlur}
-              onChange={props.onChange}
-              onFocus={props.onFocus}
-              options={schema.anyOf.map(_schema =>
-                retrieveSchema(_schema, rootSchema, formData)
-              )}
-              baseType={schema.type}
-              registry={registry}
-              schema={schema}
-              uiSchema={uiSchema}
-            />
-          )}
+        {schema.anyOf && !uiSchema["ui:field"] && !isSelect(schema) && (
+          <_AnyOfField
+            disabled={disabled}
+            readonly={readonly}
+            hideError={hideError}
+            errorSchema={errorSchema}
+            formData={formData}
+            idPrefix={idPrefix}
+            idSchema={idSchema}
+            idSeparator={idSeparator}
+            onBlur={props.onBlur}
+            onChange={props.onChange}
+            onFocus={props.onFocus}
+            options={schema.anyOf.map(_schema =>
+              retrieveSchema(_schema, rootSchema, formData)
+            )}
+            baseType={schema.type}
+            registry={registry}
+            schema={schema}
+            uiSchema={uiSchema}
+          />
+        )}
 
-        {FieldComponent === NullComponent &&
-          schema.oneOf &&
-          !isSelect(schema) && (
-            <_OneOfField
-              disabled={disabled}
-              readonly={readonly}
-              hideError={hideError}
-              errorSchema={errorSchema}
-              formData={formData}
-              idPrefix={idPrefix}
-              idSchema={idSchema}
-              idSeparator={idSeparator}
-              onBlur={props.onBlur}
-              onChange={props.onChange}
-              onFocus={props.onFocus}
-              options={schema.oneOf.map(_schema =>
-                retrieveSchema(_schema, rootSchema, formData)
-              )}
-              baseType={schema.type}
-              registry={registry}
-              schema={schema}
-              uiSchema={uiSchema}
-            />
-          )}
+        {schema.oneOf && !uiSchema["ui:field"] && !isSelect(schema) && (
+          <_OneOfField
+            disabled={disabled}
+            readonly={readonly}
+            hideError={hideError}
+            errorSchema={errorSchema}
+            formData={formData}
+            idPrefix={idPrefix}
+            idSchema={idSchema}
+            idSeparator={idSeparator}
+            onBlur={props.onBlur}
+            onChange={props.onChange}
+            onFocus={props.onFocus}
+            options={schema.oneOf.map(_schema =>
+              retrieveSchema(_schema, rootSchema, formData)
+            )}
+            baseType={schema.type}
+            registry={registry}
+            schema={schema}
+            uiSchema={uiSchema}
+          />
+        )}
       </React.Fragment>
     </FieldTemplate>
   );
